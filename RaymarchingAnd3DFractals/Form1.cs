@@ -21,15 +21,14 @@ namespace RaymarchingAnd3DFractals
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            Rayable drawnObject = new Rayable(new Vector3(0.5f, 0.5f, 0.5f), 1 / 2);
-            Vector3 pointOfView = new Vector3(0, 0, 0);
-            Vector3 direction = new Vector3(0, 0, 1);
-            //Pen myPen = new Pen(Color.Blue,pixel_Y);
+            Rayable drawnObject = new Rayable(new Vector3(0f, 0.5f, 0f), 0.25f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
+            Vector3 pointOfView = new Vector3(0f, 1f, -5f);
+            Vector3 direction = new Vector3(0f, 0, 1f);
             Graphics g = e.Graphics;
             Bitmap image1 = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\My Games\Terraria\ModLoader\Mod Sources\OkkokkoHeap\Textures\500x500.bmp"));
 
-            Scan(image1, drawnObject, pointOfView, direction);
-            g.DrawImage(image1, new Point(0, 0));
+            Bitmap image2 = Scan(image1, drawnObject, pointOfView, direction);
+            g.DrawImage(image2, new Point(0, 0));
             //g.Flush(System.Drawing.Drawing2D.FlushIntention.Flush);
 
         }
@@ -38,10 +37,18 @@ namespace RaymarchingAnd3DFractals
             Vector3 point = Point;
             if (true)
             {
-                point.x = MathModulo(point.x, 1);
-                point.y = MathModulo(point.y, 1);
-                //point.y = Mathf.Abs(point.y);
-                //point.z = Math.Abs(10-point.z)
+                //if (point.x < 3f && point.x > -3f)
+                {
+                    //point.x = MathModulo(point.x, 1f);
+                }
+                //if (point.y < 3f && point.y > -3f)
+                {
+                    //point.y = MathModulo(point.y, 1f);
+                    point.y = Math.Abs(point.y);
+                }
+                    //if (point.y > 2){ point.y -= 2f;point.x -= 1f;}
+                    //point.y = Mathf.Abs(point.y);
+                    //point.z = Math.Abs(10-point.z)
                 //point.z = MathModulo(point.z, 1);
             }
             return (item.Position - point).Length - item.Radius;
@@ -51,35 +58,33 @@ namespace RaymarchingAnd3DFractals
             return ((a % b) + b) % b;
         }
 
-        public void Scan(Bitmap baseImage, Rayable drawnObject, Vector3 pov = null, Vector3 rotation = null)
+        public Bitmap Scan(Bitmap baseImage, Rayable drawnObject, Vector3 pov = null, Vector3 rotation = null,float lengthCutoff=30)
         {
             if (pov == null) { pov = Vector3.zero; }
             if (rotation == null) { rotation = new Vector3(0, 0, 1); }
-
-
-            for (int iy = 0; iy < resolution_Y; iy++)
+            Bitmap image = new Bitmap( baseImage);
+            for (int iy = 1; iy < resolution_Y; iy++)
             {
-                for (int ix = 0; ix < resolution_X; ix++)
+                for (int ix = 1; ix < resolution_X; ix++)
                 {
-                    RayResult result = Ray(new Vector3((float)(ix) / resolution_X - 0.5f, (float)(iy) / resolution_Y - 0.5f, 1).Rotate(rotation), drawnObject, pov, 0.1f, 10);
-                    int color = (int)((1 - (result.Closest * 10)) * 255);
+                    RayResult result = Ray(new Vector3((float)(ix) / resolution_X - 0.5f, (float)(iy) / resolution_Y - 0.5f, 1).Rotate(rotation), drawnObject, pov, 0.1f, lengthCutoff);
+                    //int color = (int)((1 - (result.Closest /0.05f)) * 255);
                     //int color = (int)((1 - (result.RayLength / 20)) * 255);
-
-                    //int color = (int)((1 - (result.Steps / 20)) * 255);
+                    //int color = (int)(( (result.RayLength/lengthCutoff)) * 255);
+                    int color = (int)((1- (result.Steps /20f)) * 255);
                     if (color > 255) { color = 255; }
-                    if (color > 0)
+                    if (color < 0) { color = 0; }
                     {
                         Color color1 = Color.FromArgb(color, color, color);
-                        baseImage.SetPixel(ix, iy, color1);
+                        image.SetPixel(resolution_X-ix, resolution_Y-iy, color1);
                         //DrawPixel(baseImage, color1, ix, resolution_Y - iy);
                     }
                 }
             }
+            return image;
         }
         public const int resolution_X = 500;
         public const int resolution_Y = 500;
-        public const int window_X = 500;
-        public const int window_Y = 500;
 
         public void DrawPixel(Bitmap bitmap, Color color, int px, int py)
         {
@@ -89,10 +94,7 @@ namespace RaymarchingAnd3DFractals
             bitmap.SetPixel(px, py, color);
 
         }
-        public void CreateBitmap()
-        {
-            Image img = Image.FromFile(@"C:\Users\Okko Heiniö\Documents\My Games\Terraria\ModLoader\Mod Sources\OkkokkoHeap\Textures\3.png");
-        }
+
 
 
         public RayResult Ray(Vector3 rayPoint, Rayable drawable, Vector3 pov, float precisionCutoff = 0.1f, float lengthCutoff = 20)
@@ -106,20 +108,25 @@ namespace RaymarchingAnd3DFractals
             while (!enough)
             {
                 steps++;
-                float closestNow = RayMarchScan(rayPointNow, drawable);
-                rayLength += closestNow;
-                rayPointNow += rayPointNorm * closestNow;
-                if (closestNow < closest)
-                {
-                    closest = closestNow;
-                }
+                closest = RayMarchScan(rayPointNow, drawable);
+                rayLength += closest;
+                rayPointNow += rayPointNorm * closest;
+                //if (closestNow < closest)
+                
+                    //closest = closestNow;
+                
 
-                if ((closest < precisionCutoff) || (rayLength > lengthCutoff))
+                if (
+                    (closest < precisionCutoff)
+                    
+                    ||(steps>=20)
+                    )
                 {
                     //DrawPixel(rayDirection * 2, 1 - closeness * 7);
                     //steps = 0;
                     enough = true;
                 }
+                if (rayLength > lengthCutoff) { enough = true;steps = 20; }
 
             }
             return new RayResult(steps, closest, rayLength);

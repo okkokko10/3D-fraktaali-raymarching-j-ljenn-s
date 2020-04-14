@@ -1,0 +1,10 @@
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\bin\Debug\RaymarchingAnd3DFractals.exe.config
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\bin\Debug\RaymarchingAnd3DFractals.exe
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\bin\Debug\RaymarchingAnd3DFractals.pdb
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.csprojAssemblyReference.cache
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.Form1.resources
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.Properties.Resources.resources
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.csproj.GenerateResource.cache
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.csproj.CoreCompileInputs.cache
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.exe
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.pdb
