@@ -21,9 +21,9 @@ namespace RaymarchingAnd3DFractals
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            Rayable drawnObject = new Rayable(new Vector3(0f, 0.5f, 0f), 0.25f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
-            Vector3 pointOfView = new Vector3(0f, 1f, -5f);
-            Vector3 direction = new Vector3(0f, 0, 1f);
+            Rayable drawnObject = new Rayable(new Vector3(0f, 01f, 0f),new Vector3(0,0,0)*0.5f, 0.5f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
+            Vector3 pointOfView = new Vector3(0f, 0f, -5f);
+            Vector3 direction = new Vector3(-0f, -0f, 1f);
             Graphics g = e.Graphics;
             Bitmap image1 = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\My Games\Terraria\ModLoader\Mod Sources\OkkokkoHeap\Textures\500x500.bmp"));
 
@@ -43,15 +43,15 @@ namespace RaymarchingAnd3DFractals
                 }
                 //if (point.y < 3f && point.y > -3f)
                 {
-                    //point.y = MathModulo(point.y, 1f);
-                    point.y = Math.Abs(point.y);
+                    point.y = MathModulo(point.y, 2f);
+                    //point.y = Math.Abs(point.y);
                 }
-                    //if (point.y > 2){ point.y -= 2f;point.x -= 1f;}
-                    //point.y = Mathf.Abs(point.y);
-                    //point.z = Math.Abs(10-point.z)
+                //if (point.y > 2){ point.y -= 2f;point.x -= 1f;}
+                //point.y = Math.Abs(point.y);
+                //point.z = Math.Abs(10 - point.z);
                 //point.z = MathModulo(point.z, 1);
             }
-            return (item.Position - point).Length - item.Radius;
+            return item.NearestPoint(point);
         }
         float MathModulo(float a, float b)
         {
@@ -97,7 +97,7 @@ namespace RaymarchingAnd3DFractals
 
 
 
-        public RayResult Ray(Vector3 rayPoint, Rayable drawable, Vector3 pov, float precisionCutoff = 0.1f, float lengthCutoff = 20)
+        public RayResult Ray(Vector3 rayPoint, Rayable drawable, Vector3 pov, float precisionCutoff = 0.1f, float lengthCutoff = 20,int maxSteps=20)
         {
             float rayLength = 0;
             int steps = 0;
@@ -119,14 +119,14 @@ namespace RaymarchingAnd3DFractals
                 if (
                     (closest < precisionCutoff)
                     
-                    ||(steps>=20)
+                    ||(steps>=maxSteps)
                     )
                 {
                     //DrawPixel(rayDirection * 2, 1 - closeness * 7);
                     //steps = 0;
                     enough = true;
                 }
-                if (rayLength > lengthCutoff) { enough = true;steps = 20; }
+                if (rayLength > lengthCutoff) { enough = true;steps = maxSteps; }
 
             }
             return new RayResult(steps, closest, rayLength);
@@ -194,16 +194,37 @@ namespace RaymarchingAnd3DFractals
 
             }
             public static Vector3 zero = new Vector3(0, 0, 0);
+            public Vector3 Positive
+            {
+                get
+                {
+                    return new Vector3(Math.Abs(this.x), Math.Abs(this.y), Math.Abs(this.z));
+                }
+            }
+            public static Vector3 Max(Vector3 a, Vector3 b)
+            {
+                return new Vector3((a.x < b.x) ? b.x : a.x, (a.y < b.y) ? b.y : a.y, (a.z < b.z) ? b.z : a.z);
+            }
         }
 
-        public struct Rayable
+        public class Rayable
         {
+            
             public Vector3 Position;
+            public Vector3 Scale;
             public float Radius;
-            public Rayable(Vector3 position, float radius)
+            public Rayable(Vector3 position,Vector3 scale, float radius)
             {
                 this.Position = position;
+                this.Scale = scale;
                 this.Radius = radius;
+            }
+            public float NearestPoint(Vector3 point)
+            {
+                //      |point-position|-scale
+                return Vector3.Max(((point - this.Position).Positive - this.Scale), Vector3.zero).Length - this.Radius;
+
+                //return (this.Position - point).Length - this.Radius;
             }
         }
 
