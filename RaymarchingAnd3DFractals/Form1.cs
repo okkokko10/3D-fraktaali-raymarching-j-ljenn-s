@@ -15,36 +15,101 @@ namespace RaymarchingAnd3DFractals
         public Form1()
         {
             InitializeComponent();
-            this.Width = 500;
-            this.Height = 500;
+            this.Width = 750;
+            this.Height = 750;
         }
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.W)
+            {
+                pointOfView += new Vector3(direction.x, direction.y, direction.z);
+                //pointOfView.z += 1;
+                //RaisePaintEvent(Form1_Paint,);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                pointOfView -= new Vector3(direction.x, direction.y, direction.z);
+                //pointOfView.z -= 1;
+            }
+            if (e.KeyCode == Keys.Down)
+            {
+                //pointOfView.x -= 1;
+                rot_up -= 0.1f;
+            }
+            if (e.KeyCode == Keys.Up)
+            {
+                //pointOfView.x += 1;
+                rot_up += 0.1f;
+            }
+            if (e.KeyCode == Keys.Space)
+            {
+                pointOfView.y += 1;
+            }
+            if (e.KeyCode == Keys.ShiftKey)
+            {
+                pointOfView.y -= 1;
+            }
+            if (e.KeyCode == Keys.Right)
+            {
+                //direction.x += 1;
+                rot_side += 0.1f;
+            }
+            if (e.KeyCode == Keys.Left)
+            {
+                //direction.x -= 1;
+                rot_side -= 0.1f;
+            }
+            if (e.KeyCode == Keys.R)
+            {
+                drawnObject.Position.y -= 0.1f;
+            }
+
+            FindForm().Refresh();
+            
+        }
+
+        public float rot_up = 0;
+        public float rot_side = 0;
+        //public Vector3 direction = new Vector3(-0f, -0f, 1f);
+        public Vector3 direction
+        {
+            get
+            {
+                return (new Vector3((float)Math.Tan(rot_side), 0, 1).Normalize+new Vector3(0,(float)Math.Tan(rot_up),0)).Normalize;
+            }
+        }
+        public Vector3 pointOfView = new Vector3(0f, 0f, -5f);
+        public Rayable drawnObject = new Rayable(new Vector3(0f, 01f, 0f),new Vector3(1,1,01)*0.5f, 0.0f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            Rayable drawnObject = new Rayable(new Vector3(0f, 01f, 0f),new Vector3(0,0,0)*0.5f, 0.5f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
-            Vector3 pointOfView = new Vector3(0f, 0f, -5f);
-            Vector3 direction = new Vector3(-0f, -0f, 1f);
+            
             Graphics g = e.Graphics;
             Bitmap image1 = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\My Games\Terraria\ModLoader\Mod Sources\OkkokkoHeap\Textures\500x500.bmp"));
 
             Bitmap image2 = Scan(image1, drawnObject, pointOfView, direction);
-            g.DrawImage(image2, new Point(0, 0));
-            //g.Flush(System.Drawing.Drawing2D.FlushIntention.Flush);
-
+            g.DrawImage(image2, new Rectangle(0,0,Width*500/resolution_X,Height*500/resolution_Y));
+                    //g.Flush(System.Drawing.Drawing2D.FlushIntention.Flush);
+            e.Dispose();
+            
         }
         public float RayMarchScan(Vector3 Point, Rayable item)
         {
-            Vector3 point = Point;
+            Vector3 point = new Vector3(Point.x,Point.y,Point.z);
             if (true)
             {
                 //if (point.x < 3f && point.x > -3f)
                 {
-                    //point.x = MathModulo(point.x, 1f);
+                    //point.x = MathModulo(point.x, 2f);
                 }
                 //if (point.y < 3f && point.y > -3f)
                 {
-                    point.y = MathModulo(point.y, 2f);
+                    //point.y = MathModulo(point.y, 2f);
                     //point.y = Math.Abs(point.y);
+                }
+                //if (point.y < 0)
+                {
+                    //point.y = -point.y;
                 }
                 //if (point.y > 2){ point.y -= 2f;point.x -= 1f;}
                 //point.y = Math.Abs(point.y);
@@ -67,12 +132,12 @@ namespace RaymarchingAnd3DFractals
             {
                 for (int ix = 1; ix < resolution_X; ix++)
                 {
-                    RayResult result = Ray(new Vector3((float)(ix) / resolution_X - 0.5f, (float)(iy) / resolution_Y - 0.5f, 1).Rotate(rotation), drawnObject, pov, 0.1f, lengthCutoff);
+                    RayResult result = Ray(new Vector3((float)(ix) / resolution_X - 0.5f, (float)(iy) / resolution_Y - 0.5f, 1).Rotate(rotation).Normalize, drawnObject, pov, 0.005f, lengthCutoff,30);
                     //int color = (int)((1 - (result.Closest /0.05f)) * 255);
                     //int color = (int)((1 - (result.RayLength / 20)) * 255);
                     //int color = (int)(( (result.RayLength/lengthCutoff)) * 255);
-                    int color = (int)((1- (result.Steps /20f)) * 255);
-                    if (color > 255) { color = 255; }
+                    int color = (int)((1- (result.Steps /50f)) * 255);
+                    if (color > 255||result.RayLength>lengthCutoff) { color = 0; }
                     if (color < 0) { color = 0; }
                     {
                         Color color1 = Color.FromArgb(color, color, color);
@@ -83,8 +148,8 @@ namespace RaymarchingAnd3DFractals
             }
             return image;
         }
-        public const int resolution_X = 500;
-        public const int resolution_Y = 500;
+        public const int resolution_X = 100;
+        public const int resolution_Y = 100;
 
         public void DrawPixel(Bitmap bitmap, Color color, int px, int py)
         {
@@ -102,7 +167,7 @@ namespace RaymarchingAnd3DFractals
             float rayLength = 0;
             int steps = 0;
             Vector3 rayPointNorm = rayPoint.Normalize;
-            Vector3 rayPointNow = pov;
+            Vector3 rayPointNow = pov*1;
             float closest = RayMarchScan(rayPointNow, drawable);
             bool enough = false;
             while (!enough)
@@ -126,7 +191,8 @@ namespace RaymarchingAnd3DFractals
                     //steps = 0;
                     enough = true;
                 }
-                if (rayLength > lengthCutoff) { enough = true;steps = maxSteps; }
+                if (rayLength > lengthCutoff) { enough = true;//steps = maxSteps; 
+                }
 
             }
             return new RayResult(steps, closest, rayLength);
@@ -152,6 +218,13 @@ namespace RaymarchingAnd3DFractals
                 this.x = X;
                 this.y = Y;
                 this.z = Z;
+            }
+            public Vector3 Copy
+            {
+                get
+                {
+                    return new Vector3(this.x,this.y,this.z);
+                }
             }
             public Vector3 Normalize
             {
