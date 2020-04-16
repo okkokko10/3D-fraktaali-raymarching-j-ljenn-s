@@ -75,10 +75,11 @@ namespace RaymarchingAnd3DFractals
         {
             get
             {
-                return (new Vector3((float)Math.Tan(rot_side), 0, 1).Normalize+new Vector3(0,(float)Math.Tan(rot_up),0)).Normalize;
+                return new Vector3(0, 0, 1).Rotate(rot_side, rot_up);
+                return Vector3.TowardsAngle(rot_side, rot_up);
             }
         }
-        public Vector3 pointOfView = new Vector3(0f, 0f, -5f);
+        public Vector3 pointOfView = new Vector3(0-5f, 0f, -0f);
         public Rayable drawnObject = new Rayable(new Vector3(0f, 01f, 0f),new Vector3(1,1,01)*0.5f, 0.0f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -132,7 +133,7 @@ namespace RaymarchingAnd3DFractals
             {
                 for (int ix = 1; ix < resolution_X; ix++)
                 {
-                    RayResult result = Ray(new Vector3((float)(ix) / resolution_X - 0.5f, (float)(iy) / resolution_Y - 0.5f, 1).Rotate(rotation).Normalize, drawnObject, pov, 0.005f, lengthCutoff,30);
+                    RayResult result = Ray(RayDirection(ix,iy,rotation), drawnObject, pov, 0.005f, lengthCutoff,30);
                     //int color = (int)((1 - (result.Closest /0.05f)) * 255);
                     //int color = (int)((1 - (result.RayLength / 20)) * 255);
                     //int color = (int)(( (result.RayLength/lengthCutoff)) * 255);
@@ -148,8 +149,8 @@ namespace RaymarchingAnd3DFractals
             }
             return image;
         }
-        public const int resolution_X = 100;
-        public const int resolution_Y = 100;
+        public const int resolution_X = 150;
+        public const int resolution_Y = 150;
 
         public void DrawPixel(Bitmap bitmap, Color color, int px, int py)
         {
@@ -158,6 +159,13 @@ namespace RaymarchingAnd3DFractals
             //gp.graphics.FillRectangle(gp.pen.Brush, px * pixel_X, py * pixel_Y,pixel_X,pixel_Y);
             bitmap.SetPixel(px, py, color);
 
+        }
+
+        public Vector3 RayDirection(int px,int py,Vector3 rotation)
+        {
+            return new Vector3((float)(px) / resolution_X - 0.5f, (float)(py) / resolution_Y - 0.5f, 01f).Rotate(rot_side,rot_up).Normalize;
+
+            //return Vector3.TowardsAngle(((float)(px) / resolution_X - 0.5f)+rot_side, ((float)(py) / resolution_Y - 0.5f)+rot_up);
         }
 
 
@@ -219,6 +227,14 @@ namespace RaymarchingAnd3DFractals
                 this.y = Y;
                 this.z = Z;
             }
+            public static Vector3 TowardsAngle(float side, float up)
+            {
+                //side=a, up=b,
+                //(cos(a)cos(b) - sin(a)r - cos(a)sin(b)d,sin(b) + cos(b)d,sin(a)cos(b) + cos(a)r - sin(a)sin(b)d)
+
+                return (new Vector3((float)Math.Tan(side), 0, 1).Normalize + new Vector3(0, (float)Math.Tan(up), 0)).Normalize;
+
+            }
             public Vector3 Copy
             {
                 get
@@ -253,17 +269,44 @@ namespace RaymarchingAnd3DFractals
             {
                 return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
             }
-            public Vector3 Rotate(Vector3 rotation)
+            public Vector3 RotateVector(Vector3 rotation)
             {//a=x,b=z,c=y
                 //  rot =a,c,b
                 //  -b,0,a   *x
                 //  -a*c/l(a,b), l(a,b), -b*c/l(a,b)   *y
-                //  
+
                 float projF = (float)Math.Sqrt(rotation.x * rotation.x + rotation.z * rotation.z); //=1
                 Vector3 projX = new Vector3(-rotation.z, 0, rotation.x) * this.x;   //=-x,0,0
                 Vector3 projY = new Vector3(-rotation.x * rotation.y / projF, projF, -rotation.z * rotation.y / projF) * this.y;  //0,y,0
 
                 return rotation + projX + projY; //-x,y,1
+
+            }
+            public Vector3 Rotate(float a,float b)
+            {
+                //  (c,d,r) side=a,up=b
+                //  (cos(a)cos(b)c-sin(a)r-cos(a)sin(b)d,sin(b)c+cos(b)d,sin(a)cos(b)c+cos(a)r-sin(a)sin(b)d)
+                //  x=  cos(a)cos(b)x -cos(a)sin(b)y -sin(a)z
+                //  cos(a)*(cos(b)x-sin(b)y) -sin(a)z
+                //  y=  sin(b)x+cos(b)y
+                //  z=  sin(a)cos(b)x +cos(a)z -sin(a)sin(b)y
+                //  sin(a)*(cos(b)x -sin(b)y) +cos(a)z                
+                /*return new Vector3(
+                (float)(Math.Cos(a) * (Math.Cos(b) * x - Math.Sin(b) * y) - Math.Sin(a) * y),
+                    (float)(Math.Sin(a) * (Math.Cos(b) * x - Math.Sin(b) * z) + Math.Cos(a) * y),
+                    (float)(Math.Sin(b) * x + Math.Cos(b) * z)
+                    );*/
+                return new Vector3(
+                    (float)(Math.Cos(a) * (Math.Cos(b) * z - Math.Sin(b) * y) - Math.Sin(-a) * x),
+                    (float)(Math.Sin(b) * z + Math.Cos(b) * y),
+                    (float)(Math.Sin(-a) * (Math.Cos(b) * z - Math.Sin(b) * y) + Math.Cos(a) * x)
+                    );
+                return new Vector3(
+                    (float)(Math.Cos(a) * (Math.Cos(b) * x - Math.Sin(b) * y) - Math.Sin(a) * z),
+                    (float)(Math.Sin(b) * x + Math.Cos(b) * y),
+                    (float)(Math.Sin(a) * (Math.Cos(b) * x - Math.Sin(b) * y) + Math.Cos(a) * z)
+                    );
+
 
             }
             public static Vector3 zero = new Vector3(0, 0, 0);
