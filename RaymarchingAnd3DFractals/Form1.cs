@@ -17,6 +17,7 @@ namespace RaymarchingAnd3DFractals
             InitializeComponent();
             this.Width = 750;
             this.Height = 750;
+            UpdateScreen();
         }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -69,8 +70,7 @@ namespace RaymarchingAnd3DFractals
 
             pointOfView += moveControl.Rotate(rot_side, rot_up);
 
-            FindForm().Refresh();
-            
+            UpdateScreen();
         }
         public const int resolution_X = 150;
         public const int resolution_Y = 150;
@@ -81,14 +81,21 @@ namespace RaymarchingAnd3DFractals
         public Vector3 pointOfView = new Vector3(5f, 0f, 0f);
         public Rayable drawnObject = new Rayable(new Vector3(01f, 01f, 0f),new Vector3(1,1,1)*0.5f, 0.0f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
 
+        public Bitmap BlankImage = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\Canvas500x500.bmp"));
+        public Bitmap TheImage;
+
+        public void UpdateScreen()
+        {
+            
+            TheImage = Scan(BlankImage, drawnObject, pointOfView);
+            FindForm().Refresh();
+        }
+
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             
             Graphics g = e.Graphics;
-            Bitmap image1 = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\My Games\Terraria\ModLoader\Mod Sources\OkkokkoHeap\Textures\500x500.bmp"));
-
-            Bitmap image2 = Scan(image1, drawnObject, pointOfView);
-            g.DrawImage(image2, new Rectangle(0,0,Width*500/resolution_X,Height*500/resolution_Y));
+            g.DrawImage(TheImage, new Rectangle(0,0,Width*500/resolution_X,Height*500/resolution_Y));
                     //g.Flush(System.Drawing.Drawing2D.FlushIntention.Flush);
             e.Dispose();
             

@@ -17,21 +17,24 @@ namespace RaymarchingAnd3DFractals
             InitializeComponent();
             this.Width = 750;
             this.Height = 750;
+            TheImage = Scan(BlankImage);
         }
+        public Bitmap BlankImage = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\Canvas500x500.bmp"));
 
         private void Form2_MouseClick(object sender, MouseEventArgs e)
         {
 
             drawable.Position = new Vector2((int)(e.X * ((float)resolution / 750)), (int)((Height - e.Y) * ((float)resolution / 750)));
+            
+            TheImage = Scan(BlankImage);
+
             FindForm().Refresh();
         }
+        public Bitmap TheImage;
         private void Form2_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            Bitmap image1 = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\My Games\Terraria\ModLoader\Mod Sources\OkkokkoHeap\Textures\500x500.bmp"));
-
-            Bitmap image2 = Scan(image1);
-            g.DrawImage(image2, new Rectangle(0, 0, Width * 500 / resolution, Height * 500 / resolution));
+            g.DrawImage(TheImage, new Rectangle(0, 0, Width * 500 / resolution, Height * 500 / resolution));
             //g.Flush(System.Drawing.Drawing2D.FlushIntention.Flush);
             e.Dispose();
 
@@ -69,11 +72,16 @@ namespace RaymarchingAnd3DFractals
         {
             //float ix = a.x, iy = a.y;
             Vector2 b = a * 1;
-            b = Mirror(b,new Vector2(20,20), -1);
-            b = Mirror(b, new Vector2(25, 25), -1);
-            b = Mirror(b, new Vector2(20, 20), 1);
-            b = Mirror(b, new Vector2(25, 25), 1);
-            //b.y = 25-Math.Abs(b.y-25);
+            if(false)
+            {
+                b = Mirror(b, new Vector2(20, 20), -1);
+                b = Mirror(b, new Vector2(25, 25), -1);
+                b = Mirror(b, new Vector2(20, 20), 1);
+                b = Mirror(b, new Vector2(25, 25), 1);
+            }
+            b.y = 25 - Math.Abs(b.y - 25);
+            b.y = 20 - Math.Abs(b.y - 20);
+
             bool unflipped = (((int)(b.x) == (int)(a.x)))&& (((int)(b.y) == (int)(a.y)));
 
             return new DistanceResult(drawable.NearestPoint(b),drawable.NearestPoint(a),unflipped);
