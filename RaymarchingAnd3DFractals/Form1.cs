@@ -77,9 +77,9 @@ namespace RaymarchingAnd3DFractals
 
 
         public float rot_up = 0;
-        public float rot_side = 0;
-        public Vector3 pointOfView = new Vector3(05f, 0f, 0f);
-        public Rayable drawnObject = new Rayable(new Vector3(2f, 01f, 1f),new Vector3(2,1,1)*0.5f, 0.0f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
+        public float rot_side = 3.1f;
+        public Vector3 pointOfView = new Vector3(5f, 0f, 0f);
+        public Rayable drawnObject = new Rayable(new Vector3(01f, 01f, 0f),new Vector3(1,1,1)*0.5f, 0.0f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
@@ -107,18 +107,24 @@ namespace RaymarchingAnd3DFractals
                     //point.y = MathModulo(point.y, 2f);
                     //point.y = Math.Abs(point.y);
                 }
-                if (point.y < 0)
+                if (point.y < 2)
                 {
-                    //point.y = -point.y;
+                    //point.y = 2-point.y;
                 }
-                if (point.x < 0)
+                if (point.x+5 < 0)
                 {
-                    point.x = -point.x;
+                    //point.x = -point.x-10;
                 }
+                point.z = 1.5f - Math.Abs(point.z - 1.5f);
 
-                //point.x = 2 - Math.Abs(Math.Abs(point.x - 2) - 4);
-                point = Mirror(point - new Vector3(0, 0, 2), 1) + new Vector3(0, 0, 2);
-                point = Mirror(point - new Vector3(0, 0, -2), -1) + new Vector3(0, 0, -2);
+                point.x = 1.5f - Math.Abs(point.x - 1.5f);
+
+                point = Mirror(point - new Vector3(0, 0, 0), 1) + new Vector3(0, 0, 0);
+                point = Mirror(point - new Vector3(0, 0, 0), -1) + new Vector3(0, 0, 0);
+
+                //point.z = 3.5f - Math.Abs(point.z - 3.5f);
+
+                //point.x = 3.5f - Math.Abs(point.x - 3.5f);
 
                 //if (point.y > 2){ point.y -= 2f;point.x -= 1f;}
                 //point.y = Math.Abs(point.y);
@@ -139,7 +145,7 @@ namespace RaymarchingAnd3DFractals
         }
 
 
-        public Bitmap Scan(Bitmap baseImage, Rayable drawnObject, Vector3 pov,float lengthCutoff=30)
+        public Bitmap Scan(Bitmap baseImage, Rayable drawnObject, Vector3 pov,float lengthCutoff=50)
         {
             Bitmap image = new Bitmap( baseImage);
             for (int iy = 1; iy < resolution_Y; iy++)

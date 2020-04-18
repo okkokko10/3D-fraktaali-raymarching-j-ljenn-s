@@ -8,3 +8,4 @@ C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\Raymar
 C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.csproj.CoreCompileInputs.cache
 C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.exe
 C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.pdb
+C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\obj\Debug\RaymarchingAnd3DFractals.Form2.resources
