@@ -17,6 +17,7 @@ namespace RaymarchingAnd3DFractals
             InitializeComponent();
             this.Width = 750;
             this.Height = 750;
+            TheImage = BlankImage;
             UpdateScreen();
         }
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -81,7 +82,13 @@ namespace RaymarchingAnd3DFractals
         public Vector3 pointOfView = new Vector3(5f, 0f, 0f);
         public Rayable drawnObject = new Rayable(new Vector3(01f, 01f, 0f),new Vector3(1,1,1)*0.5f, 0.0f); //why the f does the results change drastically if I put in a fraction instead of a decimal?
 
-        public Bitmap BlankImage = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\Canvas500x500.bmp"));
+        public Bitmap BlankImage
+        {
+            get
+            {
+                return new Bitmap(resolution_X, resolution_Y);
+            }
+        }
         public Bitmap TheImage;
 
         public void UpdateScreen()
@@ -95,7 +102,7 @@ namespace RaymarchingAnd3DFractals
         {
             
             Graphics g = e.Graphics;
-            g.DrawImage(TheImage, new Rectangle(0,0,Width*500/resolution_X,Height*500/resolution_Y));
+            g.DrawImage(TheImage, new Rectangle(0,0,Width,Height));
                     //g.Flush(System.Drawing.Drawing2D.FlushIntention.Flush);
             e.Dispose();
             
@@ -166,6 +173,7 @@ namespace RaymarchingAnd3DFractals
                     int color = (int)((1- (result.Steps /50f)) * 255);
                     if (color > 255||result.RayLength>lengthCutoff) { color = 0; }
                     if (color < 0) { color = 0; }
+                    //if(color>100)
                     {
                         Color color1 = Color.FromArgb(color, color, color);
                         //image.SetPixel(resolution_X-ix, resolution_Y-iy, color1);

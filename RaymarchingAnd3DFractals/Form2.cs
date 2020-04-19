@@ -19,8 +19,16 @@ namespace RaymarchingAnd3DFractals
             this.Height = 750;
             TheImage = Scan(BlankImage);
         }
-        public Bitmap BlankImage = new Bitmap(Image.FromFile(@"C:\Users\Okko Heiniö\Documents\GitHub\3D-fraktaali-raymarching-j-ljenn-s\RaymarchingAnd3DFractals\Canvas500x500.bmp"));
-
+        public Bitmap BlankImage
+        {
+            get
+            {
+                Bitmap b = new Bitmap(1, 1);
+                b.SetPixel(0, 0, Color.Black);
+                b = new Bitmap(b, resolution, resolution);
+                return b;
+            }
+        }
         private void Form2_MouseClick(object sender, MouseEventArgs e)
         {
 
